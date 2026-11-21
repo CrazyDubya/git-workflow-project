@@ -17,9 +17,14 @@ create_feature() {
         return 1
     fi
     
-    git checkout develop 2>/dev/null || git checkout -b develop
+    if ! { git checkout develop 2>/dev/null || git checkout -b develop; }; then
+        echo -e "${RED}Could not switch to develop; feature branch not created.${NC}" >&2
+        return 1
+    fi
     git pull origin develop 2>/dev/null || echo "No remote yet"
-    git checkout -b "feature/$1"
+    if ! git checkout -b "feature/$1"; then
+        return 1
+    fi
     echo -e "${GREEN}Created feature branch: feature/$1${NC}"
 }
 

@@ -34,9 +34,14 @@ create_experiment() {
         return 1
     fi
     
-    git checkout draft 2>/dev/null || git checkout -b draft
+    if ! { git checkout draft 2>/dev/null || git checkout -b draft; }; then
+        echo -e "${RED}Could not switch to draft; experiment branch not created.${NC}" >&2
+        return 1
+    fi
     git pull origin draft 2>/dev/null || echo "No remote yet"
-    git checkout -b "experiment/$1"
+    if ! git checkout -b "experiment/$1"; then
+        return 1
+    fi
     echo -e "${GREEN}Created experiment branch: experiment/$1${NC}"
 }
 
@@ -46,9 +51,14 @@ create_personal() {
         return 1
     fi
     
-    git checkout develop 2>/dev/null || git checkout -b develop
+    if ! { git checkout develop 2>/dev/null || git checkout -b develop; }; then
+        echo -e "${RED}Could not switch to develop; personal branch not created.${NC}" >&2
+        return 1
+    fi
     git pull origin develop 2>/dev/null || echo "No remote yet"
-    git checkout -b "personal/$1/$2"
+    if ! git checkout -b "personal/$1/$2"; then
+        return 1
+    fi
     echo -e "${GREEN}Created personal branch: personal/$1/$2${NC}"
 }
 
@@ -58,9 +68,14 @@ create_hotfix() {
         return 1
     fi
     
-    git checkout main
+    if ! git checkout main; then
+        echo -e "${RED}Could not switch to main; hotfix branch not created.${NC}" >&2
+        return 1
+    fi
     git pull origin main 2>/dev/null || echo "No remote yet"
-    git checkout -b "hotfix/$1"
+    if ! git checkout -b "hotfix/$1"; then
+        return 1
+    fi
     echo -e "${GREEN}Created hotfix branch: hotfix/$1${NC}"
 }
 
